@@ -42,7 +42,18 @@ func TestLexer_Tokenise(t *testing.T) {
 			wantTokens: []string{"{", "\"key\"", ":", "[", "test", "1", "3", "]", "}"},
 			wantErr:    nil,
 		},
+		{
+			name: "Text After JSON",
+			args: args{
+				r: bytes.NewReader(json.RawMessage(`{"Extra value after close": true} "misplaced quoted value"`)),
+			},
+			wantTokens: []string{"{", "\"Extra value after close\"", ":", "true", "}", "\"misplaced quoted value\""},
+			wantErr:    nil,
+		},
 	}
+
+	//{"Extra value after close": true} "misplaced quoted value"
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := &Lexer{}

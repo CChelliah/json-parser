@@ -137,6 +137,25 @@ func TestParser_Parse(t *testing.T) {
 			},
 			wantErr: nil,
 		},
+		{
+			name: "Parse Unspaced Delimiter",
+			fields: fields{
+				stack: []string{},
+				tokenTypes: map[string]TokenType{
+					"{":  Delimiter,
+					"}":  Delimiter,
+					":":  Delimiter,
+					"[":  Delimiter,
+					"]":  Delimiter,
+					"\"": Terminal,
+				},
+			},
+			args: args{
+				tokens: []string{"{", "\"Extra value after close\"", ":", "true", "}", "\"misplaced quoted value\""},
+				pos:    &dummyPos,
+			},
+			wantErr: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

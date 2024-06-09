@@ -27,16 +27,16 @@ func TestValidator_Validate(t *testing.T) {
 			args: args{
 				content: []byte("{}"),
 			},
-			wantResult: 0,
+			wantResult: 1,
 			wantErr:    nil,
 		},
 		{
-			name: "Empty JSON",
+			name: "String Outside JSON",
 			args: args{
 				content: []byte("{\"Extra value after close\": true} \"misplaced quoted value\""),
 			},
 			wantResult: 0,
-			wantErr:    nil,
+			wantErr:    ErrInvalidJSON,
 		},
 	}
 	for _, tt := range tests {

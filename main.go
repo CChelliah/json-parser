@@ -17,6 +17,9 @@ func main() {
 	parser := NewParser()
 	validator := NewJSONValidator(lexer, parser)
 	for _, entry := range dir {
+
+		fmt.Printf("Opening file %s/%s\n", directory, entry.Name())
+
 		file, err := os.Open(fmt.Sprintf("%s/%s", directory, entry.Name()))
 		if err != nil {
 			fmt.Printf("error opening file: %s, %s \n", entry.Name(), err)
