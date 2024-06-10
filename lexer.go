@@ -47,7 +47,7 @@ func splitJSON(data []byte, eof bool) (advance int, tokenBytes []byte, err error
 		case isLiteral(token):
 			advance++
 			i++
-			for string(data[i]) != "\"" {
+			for advance < len(data) && string(data[i]) != "\"" {
 				token += string(data[i])
 				i++
 				advance++
@@ -55,8 +55,14 @@ func splitJSON(data []byte, eof bool) (advance int, tokenBytes []byte, err error
 			token += string(data[i])
 			return advance, []byte(token), nil
 		default:
+			advance++
 			i++
-			for string(data[i]) != " " {
+			for advance < len(data) &&
+				string(data[i]) != " " &&
+				string(data[i]) != "}" &&
+				string(data[i]) != "{" &&
+				string(data[i]) != "]" &&
+				string(data[i]) != "[" {
 				token += string(data[i])
 				i++
 				advance++
@@ -69,7 +75,7 @@ func splitJSON(data []byte, eof bool) (advance int, tokenBytes []byte, err error
 }
 
 func isWhiteSpace(ch byte) bool {
-	return string(ch) == " "
+	return string(ch) == " " || string(ch) == "\n" || string(ch) == "\r" || string(ch) == "\t" || string(ch) == "\v"
 }
 
 func isLiteral(token string) bool {

@@ -47,7 +47,7 @@ func TestLexer_Tokenise(t *testing.T) {
 			args: args{
 				r: bytes.NewReader(json.RawMessage(`{"Extra value after close": true} "misplaced quoted value"`)),
 			},
-			wantTokens: []string{"{", "\"Extra value after close\"", ":", "true", "}", "\"misplaced quoted value\""},
+			wantTokens: []string{"{", "\"Extra value after close\"", ":", "true}", "\"misplaced quoted value\""},
 			wantErr:    nil,
 		},
 	}

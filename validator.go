@@ -30,7 +30,7 @@ func (v Validator) Validate(file *os.File) (result int, err error) {
 
 	switch {
 	case err != nil && errors.Is(err, ErrInvalidJSON):
-		return 0, nil
+		return 0, err
 	case err != nil:
 		return 0, err
 	}

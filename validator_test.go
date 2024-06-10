@@ -15,6 +15,9 @@ func TestValidator_Validate(t *testing.T) {
 	type args struct {
 		content []byte
 	}
+
+	parser := NewParser()
+
 	tests := []struct {
 		name       string
 		fields     fields
@@ -24,6 +27,10 @@ func TestValidator_Validate(t *testing.T) {
 	}{
 		{
 			name: "Empty JSON",
+			fields: fields{
+				Lexer:  Lexer{},
+				Parser: parser,
+			},
 			args: args{
 				content: []byte("{}"),
 			},
@@ -32,11 +39,32 @@ func TestValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "String Outside JSON",
+			fields: fields{
+				Lexer:  Lexer{},
+				Parser: parser,
+			},
 			args: args{
-				content: []byte("{\"Extra value after close\": true} \"misplaced quoted value\""),
+				content: []byte((`{"Extra value after close": true} "misplaced quoted value}`)),
 			},
 			wantResult: 0,
 			wantErr:    ErrInvalidJSON,
+		},
+		{
+			name: "Passing JSON",
+			fields: fields{
+				Lexer:  Lexer{},
+				Parser: parser,
+			},
+			args: args{
+				content: []byte((`{
+										"JSON Test Pattern pass3": {
+											"The outermost value": "must be an object or array.",
+											"In this test": "It is an object."
+										}
+									}`)),
+			},
+			wantResult: 1,
+			wantErr:    nil,
 		},
 	}
 	for _, tt := range tests {

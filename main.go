@@ -16,9 +16,9 @@ func main() {
 	lexer := NewLexer()
 	parser := NewParser()
 	validator := NewJSONValidator(lexer, parser)
+	passedCount := 0
+	totalCount := 0
 	for _, entry := range dir {
-
-		fmt.Printf("Opening file %s/%s\n", directory, entry.Name())
 
 		file, err := os.Open(fmt.Sprintf("%s/%s", directory, entry.Name()))
 		if err != nil {
@@ -26,11 +26,18 @@ func main() {
 			return
 		}
 		result, err := validator.Validate(file)
-		if err != nil {
-			fmt.Printf("error validating file: %s, %s \n", entry.Name(), err)
-			return
+
+		if entry.Name()[0:4] == "fail" && err != nil {
+			fmt.Printf("Filename : %s, result %d: PASSED\n", entry.Name(), result)
+			passedCount++
+		} else if err == nil {
+			fmt.Printf("Filename : %s, result %d: PASSED\n", entry.Name(), result)
+			passedCount++
+		} else {
+			fmt.Printf("Filename : %s, result %d: FAILED, error is %s \n", entry.Name(), result, err.Error())
 		}
-		fmt.Printf("Filename : %s, result %d \n", entry.Name(), result)
+		totalCount++
 	}
+	fmt.Printf("Total: %d, Passed: %d,\n", totalCount, passedCount)
 	return
 }

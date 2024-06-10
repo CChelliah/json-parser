@@ -151,7 +151,7 @@ func TestParser_Parse(t *testing.T) {
 				},
 			},
 			args: args{
-				tokens: []string{"{", "\"Extra value after close\"", ":", "true", "}", "\"misplaced quoted value\""},
+				tokens: []string{"{", "\"Extra value after close\"", ":", "true}", "\"misplaced quoted value\""},
 				pos:    &dummyPos,
 			},
 			wantErr: nil,

@@ -19,7 +19,7 @@ type (
 
 func NewParser() Parser {
 
-	tokenTypes := map[string]TokenType{
+	tt := map[string]TokenType{
 		"{":  Delimiter,
 		"}":  Delimiter,
 		":":  Delimiter,
@@ -30,7 +30,7 @@ func NewParser() Parser {
 
 	return Parser{
 		stack:      []string{},
-		tokenTypes: tokenTypes,
+		tokenTypes: tt,
 	}
 }
 
@@ -39,7 +39,7 @@ func (p Parser) Parse(tokens []string, pos *int) error {
 		var tokenType TokenType
 		token := tokens[*pos]
 		switch {
-		case p.tokenTypes[tokens[*pos]] == Delimiter:
+		case p.tokenTypes[token] == Delimiter || token == "true" || token == "false":
 			tokenType = Delimiter
 		case p.tokenTypes[string(tokens[*pos][0])] == Terminal:
 			tokenType = Terminal
@@ -54,9 +54,13 @@ func (p Parser) Parse(tokens []string, pos *int) error {
 			*pos++
 			p.stack = append(p.stack, token)
 		} else if tokenType == Delimiter && len(p.stack) >= 2 &&
-			token == "}" && p.stack[length-2] == "{" && p.stack[length-1] == ":" {
+			(token == "}" && p.stack[length-2] == "{" || token == "]" && p.stack[length-2] == "[") && p.stack[length-1] == ":" {
 			*pos++
 			p.stack = p.stack[:(length - 2)]
+		} else if tokenType == Delimiter && len(p.stack) == 1 && (token == "}" && p.stack[length-1] == "{" ||
+			token == "]" && p.stack[length-1] == "[") {
+			*pos++
+			p.stack = p.stack[:(length - 1)]
 		} else if tokenType == Delimiter &&
 			len(p.stack) >= 1 &&
 			token == "]" && p.stack[length-1] == "[" {
