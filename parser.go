@@ -26,6 +26,7 @@ func NewParser() Parser {
 		"[":  Delimiter,
 		"]":  Delimiter,
 		"\"": Terminal,
+		",":  Terminal,
 	}
 
 	return Parser{
@@ -66,7 +67,10 @@ func (p Parser) Parse(tokens []string, pos *int) error {
 			token == "]" && p.stack[length-1] == "[" {
 			*pos++
 			p.stack = p.stack[:(length - 1)]
-		} else if tokenType == Terminal {
+		} else if len(p.stack) >= 1 && tokenType == Terminal && (token == "," || token == ",\n") {
+			*pos++
+			p.stack = p.stack[:(length - 1)]
+		} else if tokenType == Terminal && token != "," && token != ",\n" {
 			*pos++
 		} else {
 			return ErrInvalidJSON

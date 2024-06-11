@@ -56,12 +56,13 @@ func TestValidator_Validate(t *testing.T) {
 				Parser: parser,
 			},
 			args: args{
-				content: []byte((`{
-										"JSON Test Pattern pass3": {
-											"The outermost value": "must be an object or array.",
-											"In this test": "It is an object."
-										}
-									}`)),
+				content: []byte(`{
+    "JSON Test Pattern pass3": {
+        "The outermost value": "must be an object or array.",
+        "In this test": "It is an object."
+    }
+}
+`),
 			},
 			wantResult: 1,
 			wantErr:    nil,
